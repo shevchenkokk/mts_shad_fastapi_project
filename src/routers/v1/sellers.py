@@ -10,7 +10,7 @@ from src.configurations.database import get_async_session
 from src.models.sellers import Seller
 from src.schemas import IncomingSeller, ReturnedAllSellers, ReturnedSeller, ReturnedSellerWithBooks
 
-sellers_router = APIRouter(tags=["sellers"], prefix="/sellers")
+sellers_router = APIRouter(tags=["seller"], prefix="/seller")
 
 # Больше не симулируем хранилище данных. Подключаемся к реальному, через сессию.
 DBSession = Annotated[AsyncSession, Depends(get_async_session)]

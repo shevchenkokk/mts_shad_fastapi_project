@@ -5,7 +5,7 @@
 # поэтому перешел на этот плагин. Он тоже хорош :-)
 
 # Создаем продавца
-POST http://localhost:8000/api/v1/sellers/ HTTP/1.1
+POST http://localhost:8000/api/v1/seller/ HTTP/1.1
 content-type: application/json
 
 {
@@ -18,17 +18,17 @@ content-type: application/json
 ###
 
 # Получаем список продавцов
-GET http://localhost:8000/api/v1/sellers/ HTTP/1.1
+GET http://localhost:8000/api/v1/seller/ HTTP/1.1
 
 ###
 
 # Получаем одного продавца по его ИД
-GET http://localhost:8000/api/v1/sellers/1 HTTP/1.1
+GET http://localhost:8000/api/v1/seller/1 HTTP/1.1
 
 ###
 
 # Обновляем поля в данных о продавце
-PUT http://localhost:8000/api/v1/sellers/1 HTTP/1.1
+PUT http://localhost:8000/api/v1/seller/1 HTTP/1.1
 content-type: application/json
 
 {
@@ -42,7 +42,7 @@ content-type: application/json
 ###
 
 # Удаляем продавца
-DELETE http://localhost:8000/api/v1/sellers/1 HTTP/1.1
+DELETE http://localhost:8000/api/v1/seller/1 HTTP/1.1
 content-type: application/json
 
 ###
