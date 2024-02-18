@@ -10,6 +10,8 @@ from src.configurations.database import get_async_session
 from src.models.sellers import Seller
 from src.schemas import IncomingSeller, ReturnedAllSellers, ReturnedSeller, ReturnedSellerWithBooks
 
+from src.utils import create_hashed_password
+
 sellers_router = APIRouter(tags=["seller"], prefix="/seller")
 
 # Больше не симулируем хранилище данных. Подключаемся к реальному, через сессию.
@@ -26,7 +28,7 @@ async def create_seller(
         first_name=seller.first_name,
         last_name=seller.last_name,
         email=seller.email,
-        password=seller.password
+        password=create_hashed_password(seller.password)
     )
     session.add(new_seller)
     await session.flush()
