@@ -4,6 +4,8 @@ from sqlalchemy import select
 
 from src.models import books, sellers
 
+from src.utils import create_hashed_password
+
 
 # Тест на ручку создающую продавца
 @pytest.mark.asyncio
@@ -12,7 +14,7 @@ async def test_create_seller(async_client):
         "first_name": "Andrey",
         "last_name": "Gavrilov",
         "email": "andr23_3s@mail.ru",
-        "password": "gg5sdeoR321!"
+        "password": create_hashed_password("gg5sdeoR321!")
     }
     response = await async_client.post("/api/v1/seller/", json=data)
 
@@ -37,13 +39,13 @@ async def test_get_sellers(db_session, async_client):
         first_name="Egor",
         last_name="Sinyavin",
         email="egorikk5_4@yandex.ru",
-        password="lwd2323%!cJ"
+        password=create_hashed_password("lwd2323%!cJ")
     )
     seller_2 = sellers.Seller(
         first_name="Ekaterina",
         last_name="Davydkova",
         email="k_a_t_k_e12@mail.ru",
-        password="bgkUDM22#edm"
+        password=create_hashed_password("bgkUDM22#edm")
     )
 
     db_session.add_all([seller, seller_2])
@@ -83,17 +85,30 @@ async def test_get_single_seller(db_session, async_client):
         first_name="Egor",
         last_name="Sinyavin",
         email="egorikk5_4@yandex.ru",
-        password="lwd2323%!cJ"
+        password=create_hashed_password("lwd2323%!cJ")
     )
     seller_2 = sellers.Seller(
         first_name="Ekaterina",
         last_name="Davydkova",
         email="k_a_t_k_e12@mail.ru",
-        password="bgkUDM22#edm"
+        password=create_hashed_password("bgkUDM22#edm")
     )
 
     db_session.add_all([seller, seller_2])
     await db_session.flush()
+
+
+    response = await async_client.post(
+        f"/api/v1/token/",
+        json={
+            "email": seller.email,
+            "password": "lwd2323%!cJ"
+        }
+    )
+    
+    assert response.status_code == status.HTTP_201_CREATED
+    
+    seller_token = response.json()["access_token"]
 
     book = books.Book(
         author="Pushkin",
@@ -106,7 +121,10 @@ async def test_get_single_seller(db_session, async_client):
     db_session.add(book)
     await db_session.flush()
 
-    response = await async_client.get(f"/api/v1/seller/{seller.id}")
+    response = await async_client.get(
+        f"/api/v1/seller/{seller.id}",
+        headers={"Authorization": f"Bearer {seller_token}"}
+    )
 
     assert response.status_code == status.HTTP_200_OK
 
@@ -137,7 +155,7 @@ async def test_delete_book(db_session, async_client):
         first_name="Egor",
         last_name="Sinyavin",
         email="egorikk5_4@yandex.ru",
-        password="lwd2323%!cJ"
+        password=create_hashed_password("lwd2323%!cJ")
     )
 
     db_session.add(seller)

@@ -9,6 +9,8 @@ from src.configurations.database import get_async_session
 from src.models.books import Book
 from src.schemas import IncomingBook, ReturnedAllBooks, ReturnedBook
 
+from src.utils import verify_token
+
 books_router = APIRouter(tags=["books"], prefix="/books")
 
 # Больше не симулируем хранилище данных. Подключаемся к реальному, через сессию.
@@ -18,7 +20,7 @@ DBSession = Annotated[AsyncSession, Depends(get_async_session)]
 # Ручка для создания записи о книге в БД. Возвращает созданную книгу.
 @books_router.post("/", response_model=ReturnedBook, status_code=status.HTTP_201_CREATED)  # Прописываем модель ответа
 async def create_book(
-    book: IncomingBook, session: DBSession
+    book: IncomingBook, session: DBSession, token: str = Depends(verify_token)
 ):  # прописываем модель валидирующую входные данные и сессию как зависимость.
     # это - бизнес логика. Обрабатываем данные, сохраняем, преобразуем и т.д.
     new_book = Book(
@@ -65,7 +67,9 @@ async def delete_book(book_id: int, session: DBSession):
 
 # Ручка для обновления данных о книге
 @books_router.put("/{book_id}")
-async def update_book(book_id: int, new_data: ReturnedBook, session: DBSession):
+async def update_book(
+    book_id: int, new_data: ReturnedBook, session: DBSession, token: str = Depends(verify_token)
+):
     # Оператор "морж", позволяющий одновременно и присвоить значение и проверить его.
     if updated_book := await session.get(Book, book_id):
         updated_book.author = new_data.author

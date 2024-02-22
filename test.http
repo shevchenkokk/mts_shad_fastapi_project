@@ -11,7 +11,18 @@ content-type: application/json
 {
     "first_name": "Kirill",
     "last_name": "Shevchenko",
-    "email": "ro2b33@gmail.com",
+    "email": "ro2b3223@gmail.com",
+    "password": "K102!3f823"
+}
+
+###
+
+# Создаем токен
+POST http://localhost:8000/api/v1/token/ HTTP/1.1
+content-type: application/json
+
+{
+    "email": "ro2b3223@gmail.com",
     "password": "K102!3f823"
 }
 
@@ -23,7 +34,9 @@ GET http://localhost:8000/api/v1/seller/ HTTP/1.1
 ###
 
 # Получаем одного продавца по его ИД
+# ! Важно ! Добавить в заголовок запроса токен после его получения
 GET http://localhost:8000/api/v1/seller/1 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJybzJiMzIyM0BnbWFpbC5jb20iLCJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MDg2MTIyNjF9.7q4sSAQT4LP5BAOtyfiQrxibU0e1MEpAHBjGx0539wU
 
 ###
 
@@ -48,8 +61,10 @@ content-type: application/json
 ###
 
 # Создаем книгу
+# ! Важно ! Добавить в заголовок запроса токен после его получения
 POST http://localhost:8000/api/v1/books/ HTTP/1.1
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJybzJiMzIyM0BnbWFpbC5jb20iLCJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MDg2MTIyNjF9.7q4sSAQT4LP5BAOtyfiQrxibU0e1MEpAHBjGx0539wU
 
 {
     "title": "Wrong Code",
@@ -72,8 +87,10 @@ GET http://localhost:8000/api/v1/books/1 HTTP/1.1
 ###
 
 # Обновляем поля в данных о книге
+# ! Важно ! Добавить в заголовок запроса токен после его получения
 PUT http://localhost:8000/api/v1/books/1 HTTP/1.1
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJybzJiMzIyM0BnbWFpbC5jb20iLCJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE3MDg2MTIyNjF9.7q4sSAQT4LP5BAOtyfiQrxibU0e1MEpAHBjGx0539wU
 
 {
     "title": "Clean Code",

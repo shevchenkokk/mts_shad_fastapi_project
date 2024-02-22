@@ -4,6 +4,8 @@ from sqlalchemy import select
 
 from src.models import books, sellers
 
+from src.utils import create_hashed_password
+
 
 # Тест на ручку создающую книгу
 @pytest.mark.asyncio
@@ -13,11 +15,23 @@ async def test_create_book(db_session, async_client):
         first_name="Andrey",
         last_name="Gavrilov",
         email="andr23_3s@mail.ru",
-        password="gg5sdeoR321!"
+        password=create_hashed_password("gg5sdeoR321!")
     )
     
     db_session.add(seller)
     await db_session.flush()
+
+    response = await async_client.post(
+        f"/api/v1/token/",
+        json={
+            "email": seller.email,
+            "password": "gg5sdeoR321!"
+        }
+    )
+    
+    assert response.status_code == status.HTTP_201_CREATED
+    
+    seller_token = response.json()["access_token"]
 
     book_data = {
         "title": "Wrong Code",
@@ -27,7 +41,11 @@ async def test_create_book(db_session, async_client):
         "seller_id": seller.id
     }
     
-    response = await async_client.post("/api/v1/books/", json=book_data)
+    response = await async_client.post(
+        "/api/v1/books/",
+        json=book_data,
+        headers={"Authorization": f"Bearer {seller_token}"}
+    )
     
     assert response.status_code == status.HTTP_201_CREATED
     
@@ -51,7 +69,7 @@ async def test_get_books(db_session, async_client):
         first_name="Andrey",
         last_name="Gavrilov",
         email="andr23_3s@mail.ru",
-        password="gg5sdeoR321!"
+        password=create_hashed_password("gg5sdeoR321!")
     )
 
     db_session.add(seller)
@@ -114,7 +132,7 @@ async def test_get_single_book(db_session, async_client):
         first_name="Andrey",
         last_name="Gavrilov",
         email="andr23_3s@mail.ru",
-        password="gg5sdeoR321!"
+        password=create_hashed_password("gg5sdeoR321!")
     )
 
     db_session.add(seller)
@@ -163,7 +181,7 @@ async def test_delete_book(db_session, async_client):
         first_name="Andrey",
         last_name="Gavrilov",
         email="andr23_3s@mail.ru",
-        password="gg5sdeoR321!"
+        password=create_hashed_password("gg5sdeoR321!")
     )
 
     db_session.add(seller)
@@ -200,11 +218,23 @@ async def test_update_book(db_session, async_client):
         first_name="Andrey",
         last_name="Gavrilov",
         email="andr23_3s@mail.ru",
-        password="gg5sdeoR321!"
+        password=create_hashed_password("gg5sdeoR321!")
     )
 
     db_session.add(seller)
     await db_session.flush()
+
+    response = await async_client.post(
+        f"/api/v1/token/",
+        json={
+            "email": seller.email,
+            "password": "gg5sdeoR321!"
+        }
+    )
+    
+    assert response.status_code == status.HTTP_201_CREATED
+    
+    seller_token = response.json()["access_token"]
 
     # Создаем книги вручную, а не через ручку, чтобы нам не попасться на ошибку которая
     # может случиться в POST ручке
@@ -229,6 +259,7 @@ async def test_update_book(db_session, async_client):
             "year": 2007,
             "seller_id": seller.id
         },
+        headers={"Authorization": f"Bearer {seller_token}"}
     )
 
     assert response.status_code == status.HTTP_200_OK

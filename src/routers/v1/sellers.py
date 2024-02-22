@@ -10,7 +10,7 @@ from src.configurations.database import get_async_session
 from src.models.sellers import Seller
 from src.schemas import IncomingSeller, ReturnedAllSellers, ReturnedSeller, ReturnedSellerWithBooks
 
-from src.utils import create_hashed_password
+from src.utils import create_hashed_password, verify_token
 
 sellers_router = APIRouter(tags=["seller"], prefix="/seller")
 
@@ -49,7 +49,7 @@ async def get_all_sellers(session: DBSession):
 
 # Ручка для получения данных о конкретном продавце по его ИД
 @sellers_router.get("/{seller_id}", response_model=ReturnedSellerWithBooks)
-async def get_seller(seller_id: int, session: DBSession):
+async def get_seller(seller_id: int, session: DBSession, token: str = Depends(verify_token)):
     res = await session.execute(
         select(Seller).where(Seller.id == seller_id).options(selectinload(Seller.books))
     )

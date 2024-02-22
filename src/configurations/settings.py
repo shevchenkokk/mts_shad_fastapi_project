@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     db_test_name: str = "fastapi_project_test_db"
     max_connection_count: int = 10
 
+    # for JWT-tokens authentication
+    jwt_secret_key: str
+
     @property
     def database_url(self) -> str:
         return f"{self.db_host}/{self.db_name}"
