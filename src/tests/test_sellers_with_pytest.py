@@ -148,7 +148,7 @@ async def test_get_single_seller(db_session, async_client):
 
 # Тест на ручку удаления продавца
 @pytest.mark.asyncio
-async def test_delete_book(db_session, async_client):
+async def test_delete_seller(db_session, async_client):
     # Создаем продавца вручную, а не через ручку, чтобы нам не попасться на ошибку которая
     # может случиться в POST ручке
     seller = sellers.Seller(
@@ -173,14 +173,14 @@ async def test_delete_book(db_session, async_client):
 
 # Тест на ручку обновления данных о продавце
 @pytest.mark.asyncio
-async def test_update_book(db_session, async_client):
+async def test_update_seller(db_session, async_client):
     # Создаем продавца вручную, а не через ручку, чтобы нам не попасться на ошибку которая
     # может случиться в POST ручке
     seller = sellers.Seller(
         first_name="Egor",
         last_name="Sinyavin",
         email="egorikk5_4@yandex.ru",
-        password="lwd2323%!cJ"
+        password=create_hashed_password("lwd2323%!cJ")
     )
 
     db_session.add(seller)
